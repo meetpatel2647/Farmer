@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="gu">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AI-Based Farmer Advisory</title>
+<link rel="manifest" href="manifest.json">
+<script>
+if ("serviceWorker" in navigator) {
+navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+<style>
+body{font-family:Arial,sans-serif;background:#f3f6fb;margin:0;padding:20px;}
+.chat{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+.msgs{height:400px;overflow:auto;margin-bottom:10px;}
+.msg{padding:10px;border-radius:8px;margin-bottom:6px;}
+.user{background:#2b7a78;color:#fff;text-align:right;}
+.bot{background:#eef6f6;color:#072727;text-align:left;}
+input{width:80%;padding:10px;border-radius:6px;border:1px solid #ccc;}
+button{padding:10px 15px;border:none;border-radius:6px;background:#2b7a78;color:#fff;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="chat">
+<div class="msgs" id="msgs"></div>
+<input type="text" id="qInput" placeholder="તમારું પ્રશ્ન લખો...">
+<button id="sendBtn">પ્રશ્ન પૂછો</button>
+</div>
+<script>
+const msgs=document.getElementById('msgs');
+const qInput=document.getElementById('qInput');
+const sendBtn=document.getElementById('sendBtn');
+const kb=[
+{q:"કપાસમાં aphid ની સારવાર કેવી રીતે કરવી?", a:"Neem અથવા insecticidal soap નો ઉપયોગ કરો. મોટા infestation માટે insecticide વાપરો."},
+{q:"धान ક્યારે વાવવું?", a:"પ્રદેશ મુજબ જુઓ, સામાન્ય રીતે મોનસૂન પહેલાં વાવવું યોગ્ય છે."},
+{q:"ગાંધો માટે ખાતર કેટલું આપવું?", a:"80-120 kg/ha N split doses માં આપવી."}
+];
+function addMsg(who,text){
+const div=document.createElement('div');div.className='msg '+who;div.innerText=text;
+msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+sendBtn.addEventListener('click',()=>{
+const q=qInput.value.trim(); if(!q) return;
+addMsg('user',q);
+let found=false;
+for(const rec of kb){
+if(q.includes(rec.q.split(' ')[0])){ addMsg('bot',rec.a); found=true; break; }
+}
+if(!found) addMsg('bot','માફ કરશો, dataset માં જવાબ નથી.'); qInput.value='';
+});
+qInput.addEventListener('keydown',e=>{if(e.key==='Enter') sendBtn.click();});
+</script>
+</body>
+</html>
